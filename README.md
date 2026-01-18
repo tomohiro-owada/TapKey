@@ -6,6 +6,12 @@
 
 <p align="center">
   <strong>スマホからMac/PCのキーボードショートカットを発火させるリモコンアプリ</strong>
+  <br>
+  <strong>Remote keyboard shortcut controller for Mac/PC via smartphone</strong>
+</p>
+
+<p align="center">
+  <a href="#english">English</a> | <a href="#日本語">日本語</a>
 </p>
 
 <p align="center">
@@ -21,6 +27,8 @@
 </p>
 
 ---
+
+<h2 id="日本語">日本語</h2>
 
 ## 概要
 
@@ -60,7 +68,25 @@ TapKeyは、スマートフォンをMac/Windows PCのリモートキーボード
 
 初回起動時にアクセシビリティ権限を求められます。これはキーボード入力をシミュレートするために必要です。
 
-**システム環境設定 > セキュリティとプライバシー > プライバシー > アクセシビリティ** でTapKeyを許可してください。
+#### 設定方法
+
+1. **システム設定**（macOS Ventura以降）または**システム環境設定**（それ以前）を開く
+2. **プライバシーとセキュリティ** > **アクセシビリティ** を選択
+3. 左下の鍵アイコンをクリックしてロックを解除
+4. リストにある **TapKey** にチェックを入れる
+
+> **Note**: TapKeyがリストにない場合は、「+」ボタンをクリックしてアプリケーションフォルダからTapKeyを追加してください。
+
+#### アクセシビリティ権限が必要な理由
+
+TapKeyは`enigo`ライブラリを使用してキーボード入力をシミュレートします。macOSではセキュリティ上の理由から、他のアプリケーションにキー入力を送信するにはアクセシビリティ権限が必要です。この権限がないとキー送信が機能しません。
+
+#### 権限を許可しても動作しない場合
+
+1. TapKeyを一度終了（メニューバーアイコン → Quit）
+2. アクセシビリティのリストからTapKeyのチェックを外す
+3. 再度チェックを入れる
+4. TapKeyを再起動
 
 ### 3. スマホからアクセス
 
@@ -146,5 +172,154 @@ npm run tauri build
 MIT License
 
 ## 作者
+
+[@t_wada](https://twitter.com/t_wada)
+
+---
+
+<h2 id="english">English</h2>
+
+## Overview
+
+TapKey turns your smartphone into a remote keyboard for your Mac/Windows PC. Configure custom buttons to trigger keyboard shortcuts or text input with a single tap.
+
+### Use Cases
+
+- **Voice input apps** - Start/stop recording with SuperWhisper, etc.
+- **Presentations** - Control slides remotely
+- **Video editing** - Quick access to frequently used shortcuts
+- **Streaming** - OBS scene switching, etc.
+
+## Download
+
+### Mac
+
+| Chip | Download |
+|------|----------|
+| Apple Silicon (M1/M2/M3) | [TapKey_aarch64.dmg](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_aarch64.dmg) |
+| Intel | [TapKey_x64.dmg](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_x64.dmg) |
+
+### Windows
+
+| Architecture | Download |
+|--------------|----------|
+| 64-bit | [TapKey_x64-setup.exe](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_x64-setup.exe) |
+
+> **Note**: On macOS, you may see a warning about unidentified developer on first launch. Go to System Settings > Privacy & Security and click "Open Anyway".
+
+## Usage
+
+### 1. Install the App
+
+Run the downloaded file to install.
+
+### 2. Grant Accessibility Permission (Mac)
+
+On first launch, you'll be prompted to grant accessibility permission. This is required to simulate keyboard input.
+
+#### How to Configure
+
+1. Open **System Settings** (macOS Ventura+) or **System Preferences** (earlier versions)
+2. Go to **Privacy & Security** > **Accessibility**
+3. Click the lock icon at bottom-left to unlock
+4. Check the box next to **TapKey** in the list
+
+> **Note**: If TapKey isn't in the list, click the "+" button and add TapKey from your Applications folder.
+
+#### Why Accessibility Permission is Required
+
+TapKey uses the `enigo` library to simulate keyboard input. On macOS, sending key events to other applications requires accessibility permission for security reasons. Without this permission, key simulation won't work.
+
+#### If It's Not Working After Granting Permission
+
+1. Quit TapKey (Menu bar icon → Quit)
+2. Uncheck TapKey in the Accessibility list
+3. Check it again
+4. Restart TapKey
+
+### 3. Connect from Your Phone
+
+1. Connect your Mac/PC and phone to the **same Wi-Fi network**
+2. Click the TapKey icon in the menu bar (Mac) or system tray (Windows)
+3. Select "Show QR Code"
+4. Scan the QR code with your phone, or enter the URL directly
+
+### 4. Customize Buttons
+
+In the settings window under "Buttons" tab:
+
+- **Add button** - Click "+ Add Button"
+- **Label** - Text displayed on the button
+- **Position and size** - Specify grid placement
+- **Color** - Button background color
+- **Action** - Keyboard shortcut or text input
+- **Long-press repeat** - For keys like Backspace that you want to repeat
+
+You can also drag and drop buttons on the preview to reposition them.
+
+### 5. Add to Home Screen as PWA (Recommended)
+
+With TapKey open in your phone's browser:
+
+- **iPhone**: Share button → "Add to Home Screen"
+- **Android**: Menu → "Add to Home Screen"
+
+This gives you an app-like experience.
+
+## Features
+
+### Keyboard Shortcuts
+
+Configure combinations of modifier keys (Cmd, Ctrl, Alt, Shift) with regular keys.
+
+Examples:
+- `Cmd + Shift + R` - Start SuperWhisper recording
+- `Cmd + N` - New file
+- `F5` - Start presentation
+
+### Text Input + Enter
+
+Input preset text and send Enter. Great for frequently used chat phrases.
+
+### Long-press Repeat
+
+For keys like Backspace or arrow keys that you want to repeat when held down.
+
+### PIN Authentication
+
+Set a PIN to prevent unauthorized access (optional).
+
+## Security
+
+- Communication is limited to the same LAN
+- PIN authentication available for access control
+- Configure firewall to restrict port access if needed
+
+## Development
+
+### Requirements
+
+- Node.js 18+
+- Rust 1.70+
+- Tauri CLI
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run tauri dev
+
+# Build
+npm run tauri build
+```
+
+## License
+
+MIT License
+
+## Author
 
 [@t_wada](https://twitter.com/t_wada)
