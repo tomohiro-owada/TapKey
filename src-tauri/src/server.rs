@@ -232,6 +232,22 @@ async fn serve_manifest() -> impl IntoResponse {
     )
 }
 
+/// PWA Icon 192x192
+async fn serve_icon_192() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "image/png")],
+        include_bytes!("../static/icon-192.png").as_slice(),
+    )
+}
+
+/// PWA Icon 512x512
+async fn serve_icon_512() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "image/png")],
+        include_bytes!("../static/icon-512.png").as_slice(),
+    )
+}
+
 pub fn create_router(state: Arc<AppState>) -> Router {
     let cors = CorsLayer::new()
         .allow_origin(Any)
@@ -245,6 +261,8 @@ pub fn create_router(state: Arc<AppState>) -> Router {
         .route("/favicon.png", get(serve_favicon))
         .route("/apple-touch-icon.png", get(serve_apple_touch_icon))
         .route("/manifest.json", get(serve_manifest))
+        .route("/icon-192.png", get(serve_icon_192))
+        .route("/icon-512.png", get(serve_icon_512))
         .route("/api/auth", post(auth))
         .route("/api/config", post(get_config))
         .route("/api/action", post(execute_action))
