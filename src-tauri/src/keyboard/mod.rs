@@ -20,7 +20,8 @@ fn key_from_string(key: &str) -> Option<Key> {
         "return" | "enter" => Some(Key::Return),
         "tab" => Some(Key::Tab),
         "space" | " " => Some(Key::Space),
-        "backspace" | "delete" => Some(Key::Backspace),
+        "backspace" => Some(Key::Backspace),
+        "delete" | "forwarddelete" => Some(Key::Delete),
         "escape" | "esc" => Some(Key::Escape),
 
         // Arrow keys

@@ -174,7 +174,7 @@ function updateRepeatInterval(intervalMs: number) {
 
 // 修飾キーの選択肢
 const modifierKeys = ['Meta', 'Control', 'Alt', 'Shift'];
-const commonKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Return', 'Tab', 'Space', 'Escape', 'Backspace', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'];
+const commonKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Return', 'Tab', 'Space', 'Escape', 'Backspace', 'Delete', 'Up', 'Down', 'Left', 'Right', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'];
 
 // マウスベースのドラッグ&ドロップ
 function onMouseDown(button: ButtonConfig, e: MouseEvent) {
