@@ -9,14 +9,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/twada/TapKey/releases/latest">
-    <img src="https://img.shields.io/github/v/release/twada/TapKey?style=flat-square" alt="Latest Release">
+  <a href="https://github.com/tomohiro-owada/TapKey/releases/latest">
+    <img src="https://img.shields.io/github/v/release/tomohiro-owada/TapKey?style=flat-square" alt="Latest Release">
   </a>
-  <a href="https://github.com/twada/TapKey/releases">
-    <img src="https://img.shields.io/github/downloads/twada/TapKey/total?style=flat-square" alt="Downloads">
+  <a href="https://github.com/tomohiro-owada/TapKey/releases">
+    <img src="https://img.shields.io/github/downloads/tomohiro-owada/TapKey/total?style=flat-square" alt="Downloads">
   </a>
-  <a href="https://github.com/twada/TapKey/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/twada/TapKey?style=flat-square" alt="License">
+  <a href="https://github.com/tomohiro-owada/TapKey/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/tomohiro-owada/TapKey?style=flat-square" alt="License">
   </a>
 </p>
 
@@ -39,14 +39,14 @@ TapKeyは、スマートフォンをMac/Windows PCのリモートキーボード
 
 | チップ | ダウンロード |
 |--------|------------|
-| Apple Silicon (M1/M2/M3) | [TapKey_aarch64.dmg](https://github.com/twada/TapKey/releases/latest/download/TapKey_aarch64.dmg) |
-| Intel | [TapKey_x64.dmg](https://github.com/twada/TapKey/releases/latest/download/TapKey_x64.dmg) |
+| Apple Silicon (M1/M2/M3) | [TapKey_aarch64.dmg](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_aarch64.dmg) |
+| Intel | [TapKey_x64.dmg](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_x64.dmg) |
 
 ### Windows
 
 | アーキテクチャ | ダウンロード |
 |--------------|------------|
-| 64-bit | [TapKey_x64-setup.exe](https://github.com/twada/TapKey/releases/latest/download/TapKey_x64-setup.exe) |
+| 64-bit | [TapKey_x64-setup.exe](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_x64-setup.exe) |
 
 > **Note**: macOSでは初回起動時に「開発元を確認できない」という警告が出る場合があります。システム環境設定 > セキュリティとプライバシー から「このまま開く」を選択してください。
 
