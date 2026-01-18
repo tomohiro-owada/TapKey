@@ -56,7 +56,13 @@ TapKeyは、スマートフォンをMac/Windows PCのリモートキーボード
 |--------------|------------|
 | 64-bit | [TapKey_x64-setup.exe](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_x64-setup.exe) |
 
-> **Note**: macOSでは初回起動時に「開発元を確認できない」という警告が出る場合があります。システム環境設定 > セキュリティとプライバシー から「このまま開く」を選択してください。
+> **Note**: macOSでは初回起動時に「開発元を確認できない」または「壊れている」という警告が出る場合があります。以下のコマンドをターミナルで実行してください：
+>
+> ```bash
+> xattr -cr /Applications/TapKey.app
+> ```
+>
+> または、システム設定 > プライバシーとセキュリティ から「このまま開く」を選択してください。
 
 ## 使い方
 
@@ -205,7 +211,13 @@ TapKey turns your smartphone into a remote keyboard for your Mac/Windows PC. Con
 |--------------|----------|
 | 64-bit | [TapKey_x64-setup.exe](https://github.com/tomohiro-owada/TapKey/releases/latest/download/TapKey_x64-setup.exe) |
 
-> **Note**: On macOS, you may see a warning about unidentified developer on first launch. Go to System Settings > Privacy & Security and click "Open Anyway".
+> **Note**: On macOS, you may see a warning saying the app is "damaged" or from an "unidentified developer". Run this command in Terminal to fix it:
+>
+> ```bash
+> xattr -cr /Applications/TapKey.app
+> ```
+>
+> Alternatively, go to System Settings > Privacy & Security and click "Open Anyway".
 
 ## Usage
 
