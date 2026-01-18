@@ -12,7 +12,7 @@ use tauri::{
 
 #[tauri::command]
 fn get_config() -> AppConfig {
-    AppConfig::load()
+    server::get_cached_config()
 }
 
 #[tauri::command]
@@ -25,13 +25,13 @@ fn save_config(config: AppConfig) -> Result<(), String> {
 
 #[tauri::command]
 fn get_server_url() -> String {
-    let config = AppConfig::load();
+    let config = server::get_cached_config();
     qr::get_server_url(config.port)
 }
 
 #[tauri::command]
 fn get_qr_code() -> Result<String, String> {
-    let config = AppConfig::load();
+    let config = server::get_cached_config();
     let url = qr::get_server_url_with_pin(config.port, &config.pin);
     qr::generate_qr_code(&url)
 }
@@ -43,8 +43,8 @@ fn get_local_ip() -> Option<String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // 設定を読み込み
-    let config = AppConfig::load();
+    // キャッシュから設定を読み込み（初回アクセスでキャッシュ初期化）
+    let config = server::get_cached_config();
     let port = config.port;
 
     tauri::Builder::default()

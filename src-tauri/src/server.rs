@@ -10,11 +10,28 @@ use axum::{
 };
 use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use tokio::sync::broadcast;
 use tower_http::cors::{Any, CorsLayer};
 
 use crate::config::{AppConfig, ButtonConfig};
+
+/// キャッシュされた設定
+static CONFIG_CACHE: once_cell::sync::Lazy<RwLock<AppConfig>> =
+    once_cell::sync::Lazy::new(|| RwLock::new(AppConfig::load()));
+
+/// キャッシュから設定を取得
+pub fn get_cached_config() -> AppConfig {
+    CONFIG_CACHE.read().unwrap().clone()
+}
+
+/// キャッシュを更新
+fn reload_config() {
+    if let Ok(mut cache) = CONFIG_CACHE.write() {
+        *cache = AppConfig::load();
+    }
+}
+
 use crate::keyboard;
 
 /// WebSocket経由で送信するメッセージの種類
@@ -66,7 +83,7 @@ pub struct ConfigResponse {
 
 /// PIN認証
 async fn auth(Json(req): Json<AuthRequest>) -> Json<AuthResponse> {
-    let config = AppConfig::load();
+    let config = get_cached_config();
 
     if config.pin.is_empty() || req.pin == config.pin {
         Json(AuthResponse {
@@ -83,7 +100,7 @@ async fn auth(Json(req): Json<AuthRequest>) -> Json<AuthResponse> {
 
 /// ボタン設定を取得
 async fn get_config(Json(req): Json<AuthRequest>) -> Response {
-    let config = AppConfig::load();
+    let config = get_cached_config();
 
     // PIN検証
     if !config.pin.is_empty() && req.pin != config.pin {
@@ -106,7 +123,7 @@ async fn get_config(Json(req): Json<AuthRequest>) -> Response {
 
 /// ボタンアクションを実行
 async fn execute_action(Json(req): Json<ActionRequest>) -> Json<ActionResponse> {
-    let config = AppConfig::load();
+    let config = get_cached_config();
 
     // PIN検証
     if !config.pin.is_empty() && req.pin != config.pin {
@@ -275,8 +292,9 @@ pub fn create_router(state: Arc<AppState>) -> Router {
 static BROADCAST_TX: once_cell::sync::OnceCell<broadcast::Sender<WsMessage>> =
     once_cell::sync::OnceCell::new();
 
-/// 設定更新を全クライアントに通知
+/// 設定更新を全クライアントに通知（キャッシュも更新）
 pub fn notify_config_updated() {
+    reload_config();
     if let Some(tx) = BROADCAST_TX.get() {
         let _ = tx.send(WsMessage::ConfigUpdated);
     }
