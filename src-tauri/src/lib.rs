@@ -17,7 +17,10 @@ fn get_config() -> AppConfig {
 
 #[tauri::command]
 fn save_config(config: AppConfig) -> Result<(), String> {
-    config.save().map_err(|e| e.to_string())
+    config.save().map_err(|e| e.to_string())?;
+    // WebSocket経由で全クライアントに設定更新を通知
+    server::notify_config_updated();
+    Ok(())
 }
 
 #[tauri::command]

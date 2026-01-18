@@ -6,6 +6,8 @@
     let config = null;
     let repeatIntervals = {}; // ボタンID -> intervalId のマップ
     let repeatTimeouts = {}; // 長押し開始のタイムアウト
+    let ws = null; // WebSocket接続
+    let wsReconnectTimer = null;
 
     // 色の明るさを調整するヘルパー関数
     function adjustBrightness(hex, percent) {
@@ -114,6 +116,63 @@
         } else {
             statusText.textContent = '設定の読み込みに失敗';
         }
+    }
+
+    // WebSocket接続
+    function connectWebSocket() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            return; // 既に接続済み
+        }
+
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+        try {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                if (wsReconnectTimer) {
+                    clearTimeout(wsReconnectTimer);
+                    wsReconnectTimer = null;
+                }
+            };
+
+            ws.onmessage = async (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+                    if (msg.type === 'ConfigUpdated') {
+                        console.log('Config updated, reloading...');
+                        await loadConfig();
+                    }
+                } catch (e) {
+                    console.error('WebSocket message parse error:', e);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                ws = null;
+                // 再接続を試みる
+                scheduleReconnect();
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        } catch (e) {
+            console.error('WebSocket connection error:', e);
+            scheduleReconnect();
+        }
+    }
+
+    // 再接続をスケジュール
+    function scheduleReconnect() {
+        if (wsReconnectTimer) return;
+        wsReconnectTimer = setTimeout(() => {
+            wsReconnectTimer = null;
+            connectWebSocket();
+        }, 3000); // 3秒後に再接続
     }
 
     // ボタンを描画
@@ -250,6 +309,8 @@
     function showMainScreen() {
         authScreen.classList.add('hidden');
         mainScreen.classList.remove('hidden');
+        // WebSocket接続を開始
+        connectWebSocket();
     }
 
     // URLパラメータからPINを取得

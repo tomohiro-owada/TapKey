@@ -1,15 +1,39 @@
 use axum::{
-    extract::Json,
+    extract::{
+        ws::{Message, WebSocket, WebSocketUpgrade},
+        Json, State,
+    },
     http::{header, Method, StatusCode},
     response::{Html, IntoResponse, Response},
     routing::{get, post},
     Router,
 };
+use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
+use tokio::sync::broadcast;
 use tower_http::cors::{Any, CorsLayer};
 
 use crate::config::{AppConfig, ButtonConfig};
 use crate::keyboard;
+
+/// WebSocket経由で送信するメッセージの種類
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", content = "data")]
+pub enum WsMessage {
+    /// 設定が更新された
+    ConfigUpdated,
+    /// Ping（接続確認）
+    Ping,
+    /// Pong（接続確認応答）
+    Pong,
+}
+
+/// アプリケーション状態（WebSocket broadcast用）
+#[derive(Clone)]
+pub struct AppState {
+    pub tx: broadcast::Sender<WsMessage>,
+}
 
 #[derive(Debug, Deserialize)]
 pub struct AuthRequest {
@@ -117,6 +141,52 @@ async fn execute_action(Json(req): Json<ActionRequest>) -> Json<ActionResponse> 
     }
 }
 
+/// WebSocket接続ハンドラ
+async fn ws_handler(
+    ws: WebSocketUpgrade,
+    State(state): State<Arc<AppState>>,
+) -> impl IntoResponse {
+    ws.on_upgrade(move |socket| handle_socket(socket, state))
+}
+
+/// WebSocket接続を処理
+async fn handle_socket(socket: WebSocket, state: Arc<AppState>) {
+    let (mut sender, mut receiver) = socket.split();
+    let mut rx = state.tx.subscribe();
+
+    // broadcast受信タスク
+    let mut send_task = tokio::spawn(async move {
+        while let Ok(msg) = rx.recv().await {
+            if let Ok(json) = serde_json::to_string(&msg) {
+                if sender.send(Message::Text(json.into())).await.is_err() {
+                    break;
+                }
+            }
+        }
+    });
+
+    // クライアントからのメッセージ受信タスク
+    let tx = state.tx.clone();
+    let mut recv_task = tokio::spawn(async move {
+        while let Some(Ok(msg)) = receiver.next().await {
+            if let Message::Text(text) = msg {
+                // Pingに応答
+                if let Ok(ws_msg) = serde_json::from_str::<WsMessage>(&text) {
+                    if matches!(ws_msg, WsMessage::Ping) {
+                        let _ = tx.send(WsMessage::Pong);
+                    }
+                }
+            }
+        }
+    });
+
+    // どちらかのタスクが終了したら両方終了
+    tokio::select! {
+        _ = &mut send_task => recv_task.abort(),
+        _ = &mut recv_task => send_task.abort(),
+    }
+}
+
 /// スマホ用Web UI HTML
 async fn serve_ui() -> Html<&'static str> {
     Html(include_str!("../static/index.html"))
@@ -138,7 +208,23 @@ async fn serve_js() -> impl IntoResponse {
     )
 }
 
-pub fn create_router() -> Router {
+/// Favicon
+async fn serve_favicon() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "image/png")],
+        include_bytes!("../static/favicon.png").as_slice(),
+    )
+}
+
+/// Apple Touch Icon
+async fn serve_apple_touch_icon() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "image/png")],
+        include_bytes!("../static/apple-touch-icon.png").as_slice(),
+    )
+}
+
+pub fn create_router(state: Arc<AppState>) -> Router {
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods([Method::GET, Method::POST])
@@ -148,14 +234,35 @@ pub fn create_router() -> Router {
         .route("/", get(serve_ui))
         .route("/style.css", get(serve_css))
         .route("/app.js", get(serve_js))
+        .route("/favicon.png", get(serve_favicon))
+        .route("/apple-touch-icon.png", get(serve_apple_touch_icon))
         .route("/api/auth", post(auth))
         .route("/api/config", post(get_config))
         .route("/api/action", post(execute_action))
+        .route("/ws", get(ws_handler))
         .layer(cors)
+        .with_state(state)
+}
+
+/// グローバルなbroadcast sender
+static BROADCAST_TX: once_cell::sync::OnceCell<broadcast::Sender<WsMessage>> =
+    once_cell::sync::OnceCell::new();
+
+/// 設定更新を全クライアントに通知
+pub fn notify_config_updated() {
+    if let Some(tx) = BROADCAST_TX.get() {
+        let _ = tx.send(WsMessage::ConfigUpdated);
+    }
 }
 
 pub async fn start_server(port: u16) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let app = create_router();
+    let (tx, _rx) = broadcast::channel::<WsMessage>(100);
+
+    // グローバルにsenderを保存
+    let _ = BROADCAST_TX.set(tx.clone());
+
+    let state = Arc::new(AppState { tx });
+    let app = create_router(state);
 
     let addr = std::net::SocketAddr::from(([0, 0, 0, 0], port));
     println!("HTTP Server listening on http://{}", addr);
