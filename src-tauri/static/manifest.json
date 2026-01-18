@@ -1,0 +1,18 @@
+{
+  "name": "TapKey",
+  "short_name": "TapKey",
+  "description": "Remote keyboard shortcut controller",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2d2d2d",
+  "theme_color": "#2d2d2d",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

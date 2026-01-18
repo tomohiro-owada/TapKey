@@ -224,6 +224,14 @@ async fn serve_apple_touch_icon() -> impl IntoResponse {
     )
 }
 
+/// Web App Manifest
+async fn serve_manifest() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "application/manifest+json")],
+        include_str!("../static/manifest.json"),
+    )
+}
+
 pub fn create_router(state: Arc<AppState>) -> Router {
     let cors = CorsLayer::new()
         .allow_origin(Any)
@@ -236,6 +244,7 @@ pub fn create_router(state: Arc<AppState>) -> Router {
         .route("/app.js", get(serve_js))
         .route("/favicon.png", get(serve_favicon))
         .route("/apple-touch-icon.png", get(serve_apple_touch_icon))
+        .route("/manifest.json", get(serve_manifest))
         .route("/api/auth", post(auth))
         .route("/api/config", post(get_config))
         .route("/api/action", post(execute_action))
