@@ -1,0 +1,226 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+    --bg-color: #2d2d2d;
+    --card-bg: #3a3a3a;
+    --text-color: #eaeaea;
+    --primary-color: #3B82F6;
+    --success-color: #22c55e;
+    --error-color: #ff6b6b;
+    --border-radius: 8px;
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    touch-action: manipulation;
+}
+
+#app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 認証画面 */
+.auth-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    padding-top: calc(20px + var(--safe-area-inset-top));
+}
+
+.auth-container h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.auth-container p {
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.auth-container input {
+    width: 100%;
+    max-width: 300px;
+    padding: 16px;
+    font-size: 24px;
+    text-align: center;
+    background-color: var(--card-bg);
+    border: 2px solid #333;
+    border-radius: var(--border-radius);
+    color: var(--text-color);
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.auth-container input:focus {
+    border-color: var(--primary-color);
+}
+
+.btn {
+    padding: 16px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-top: 15px;
+    min-height: 20px;
+}
+
+/* メイン画面 */
+#main-screen {
+    padding: var(--safe-area-inset-top) 0 var(--safe-area-inset-bottom) 0;
+}
+
+.button-grid {
+    flex: 1;
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+    width: 100%;
+    align-content: stretch;
+}
+
+.grid-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    background: linear-gradient(180deg, #f8f8f8 0%, #e0e0e0 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    min-height: 60px;
+    user-select: none;
+    -webkit-user-select: none;
+    /* キーキャップの立体感 */
+    box-shadow:
+        0 1px 0 #fff inset,
+        0 -2px 0 #c0c0c0 inset,
+        0 4px 0 #999,
+        0 6px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* 色付きボタン用のスタイル調整 */
+.grid-button[style*="background-color: #3B82F6"],
+.grid-button[style*="background-color: #F59E0B"],
+.grid-button[style*="background-color: #EF4444"] {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.grid-button:active,
+.grid-button.pressed {
+    transform: translateY(3px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.3) inset,
+        0 -1px 0 rgba(0,0,0,0.2) inset,
+        0 1px 0 #999,
+        0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.grid-button.success {
+    animation: flash-success 0.3s ease-out;
+}
+
+@keyframes flash-success {
+    0% { filter: brightness(1.5); }
+    100% { filter: brightness(1); }
+}
+
+/* ステータス表示 */
+.status-bar {
+    position: fixed;
+    bottom: calc(8px + var(--safe-area-inset-bottom));
+    right: 8px;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.reload-btn {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+.reload-btn:active {
+    background: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* レスポンシブ対応 */
+@media (orientation: landscape) {
+    .grid-button {
+        min-height: 60px;
+    }
+}
+
+@media (min-width: 768px) {
+    .grid-button {
+        font-size: 22px;
+    }
+}

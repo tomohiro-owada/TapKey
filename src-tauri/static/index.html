@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TapKey">
+    <title>TapKey</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- PIN入力画面 -->
+        <div id="auth-screen" class="screen">
+            <div class="auth-container">
+                <h1>TapKey</h1>
+                <p>PINを入力してください</p>
+                <input type="password" id="pin-input" inputmode="numeric" pattern="[0-9]*" placeholder="PIN">
+                <button id="auth-button" class="btn btn-primary">接続</button>
+                <p id="auth-error" class="error-message"></p>
+            </div>
+        </div>
+
+        <!-- メインコントローラー画面 -->
+        <div id="main-screen" class="screen hidden">
+            <div id="button-grid" class="button-grid">
+                <!-- ボタンはJavaScriptで動的に生成 -->
+            </div>
+            <div id="status-bar" class="status-bar">
+                <span id="status-text">接続中...</span>
+                <button id="reload-btn" class="reload-btn" title="リロード">↻</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
