@@ -173,7 +173,7 @@ MIT License
 
 ## 作者
 
-[@t_wada](https://twitter.com/t_wada)
+[@abalol](https://twitter.com/abalol)
 
 ---
 
@@ -322,4 +322,4 @@ MIT License
 
 ## Author
 
-[@t_wada](https://twitter.com/t_wada)
+[@abalol](https://twitter.com/abalol)
