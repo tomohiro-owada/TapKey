@@ -83,7 +83,7 @@
             return await response.json();
         } catch (error) {
             console.error('API Error:', error);
-            return { success: false, message: '通信エラー' };
+            return { success: false, message: 'Connection error' };
         }
     }
 
@@ -100,7 +100,7 @@
             await loadConfig();
             showMainScreen();
         } else {
-            authError.textContent = result.message || '認証に失敗しました';
+            authError.textContent = result.message || 'Authentication failed';
             authButton.disabled = false;
         }
     }
@@ -112,16 +112,16 @@
         if (result.grid) {
             config = result;
             renderButtons();
-            statusText.textContent = '接続済み';
+            statusText.textContent = 'Connected';
         } else {
-            statusText.textContent = '設定の読み込みに失敗';
+            statusText.textContent = 'Failed to load config';
         }
     }
 
     // WebSocket接続
     function connectWebSocket() {
         if (ws && ws.readyState === WebSocket.OPEN) {
-            return; // 既に接続済み
+            return; // 既にConnected
         }
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -300,7 +300,7 @@
         } else {
             statusText.textContent = result.message || 'エラー';
             setTimeout(() => {
-                statusText.textContent = '接続済み';
+                statusText.textContent = 'Connected';
             }, 2000);
         }
     }

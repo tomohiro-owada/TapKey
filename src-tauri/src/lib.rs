@@ -60,10 +60,10 @@ pub fn run() {
                 });
             });
 
-            // トレイメニューを作成
-            let quit_item = MenuItem::with_id(app, "quit", "終了", true, None::<&str>)?;
-            let settings_item = MenuItem::with_id(app, "settings", "設定...", true, None::<&str>)?;
-            let show_qr_item = MenuItem::with_id(app, "show_qr", "QRコードを表示", true, None::<&str>)?;
+            // Create tray menu
+            let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+            let settings_item = MenuItem::with_id(app, "settings", "Settings...", true, None::<&str>)?;
+            let show_qr_item = MenuItem::with_id(app, "show_qr", "Show QR Code", true, None::<&str>)?;
 
             let menu = Menu::with_items(app, &[&show_qr_item, &settings_item, &quit_item])?;
 

@@ -71,12 +71,12 @@ async fn auth(Json(req): Json<AuthRequest>) -> Json<AuthResponse> {
     if config.pin.is_empty() || req.pin == config.pin {
         Json(AuthResponse {
             success: true,
-            message: "認証成功".to_string(),
+            message: "Authentication successful".to_string(),
         })
     } else {
         Json(AuthResponse {
             success: false,
-            message: "PINが正しくありません".to_string(),
+            message: "Invalid PIN".to_string(),
         })
     }
 }
@@ -91,7 +91,7 @@ async fn get_config(Json(req): Json<AuthRequest>) -> Response {
             StatusCode::UNAUTHORIZED,
             Json(AuthResponse {
                 success: false,
-                message: "PINが正しくありません".to_string(),
+                message: "Invalid PIN".to_string(),
             }),
         )
             .into_response();
@@ -112,7 +112,7 @@ async fn execute_action(Json(req): Json<ActionRequest>) -> Json<ActionResponse> 
     if !config.pin.is_empty() && req.pin != config.pin {
         return Json(ActionResponse {
             success: false,
-            message: "PINが正しくありません".to_string(),
+            message: "Invalid PIN".to_string(),
         });
     }
 
@@ -126,17 +126,17 @@ async fn execute_action(Json(req): Json<ActionRequest>) -> Json<ActionResponse> 
             match keyboard::execute_action(&action) {
                 Ok(()) => Json(ActionResponse {
                     success: true,
-                    message: "アクション実行完了".to_string(),
+                    message: "Action executed".to_string(),
                 }),
                 Err(e) => Json(ActionResponse {
                     success: false,
-                    message: format!("アクション実行失敗: {}", e),
+                    message: format!("Action failed: {}", e),
                 }),
             }
         }
         None => Json(ActionResponse {
             success: false,
-            message: format!("ボタンが見つかりません: {}", req.button_id),
+            message: format!("Button not found: {}", req.button_id),
         }),
     }
 }

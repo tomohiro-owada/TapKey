@@ -38,10 +38,10 @@ async function saveConfig() {
     await invoke('save_config', { config: config.value });
     // 保存後に設定を再読み込みしてUIを更新
     await loadConfig();
-    saveMessage.value = '保存しました';
+    saveMessage.value = 'Saved';
     setTimeout(() => saveMessage.value = '', 2000);
   } catch (e) {
-    saveMessage.value = '保存に失敗しました';
+    saveMessage.value = 'Failed to save';
     console.error('設定保存失敗:', e);
   } finally {
     isSaving.value = false;
@@ -65,7 +65,7 @@ function openButtonEditor(button?: ButtonConfig) {
   } else {
     editingButton.value = {
       id: `btn_${Date.now()}`,
-      label: '新規ボタン',
+      label: 'New Button',
       position: { x: 0, y: 0, width: 1, height: 1 },
       action: { type: 'shortcut', keys: [] },
       color: '#3498db'
@@ -123,7 +123,7 @@ function getButtonActionText(button: ButtonConfig): string {
   if (button.action.type === 'shortcut') {
     return (button.action as ShortcutAction).keys.join(' + ');
   }
-  return 'テキスト入力 + Enter';
+  return 'Text Input + Enter';
 }
 
 // 編集中のショートカットキー
@@ -267,7 +267,7 @@ onMounted(async () => {
 <template>
   <div class="app">
     <header class="header">
-      <h1>TapKey 設定</h1>
+      <h1>TapKey Settings</h1>
     </header>
 
     <nav class="tabs">
@@ -275,13 +275,13 @@ onMounted(async () => {
         :class="['tab', { active: activeTab === 'server' }]"
         @click="activeTab = 'server'"
       >
-        サーバー設定
+        Server
       </button>
       <button
         :class="['tab', { active: activeTab === 'buttons' }]"
         @click="activeTab = 'buttons'"
       >
-        ボタン設定
+        Buttons
       </button>
     </nav>
 
@@ -289,26 +289,26 @@ onMounted(async () => {
       <!-- サーバー設定タブ -->
       <section v-show="activeTab === 'server'" class="tab-content">
         <div class="form-group">
-          <label>ポート番号</label>
+          <label>Port</label>
           <input type="number" v-model.number="config.port" min="1024" max="65535" />
         </div>
 
         <div class="form-group">
-          <label>PIN（空の場合は認証なし）</label>
-          <input type="text" v-model="config.pin" placeholder="4桁の数字など" />
+          <label>PIN (leave empty for no authentication)</label>
+          <input type="text" v-model="config.pin" placeholder="e.g. 1234" />
         </div>
 
         <div class="form-group">
-          <label>サーバーURL</label>
+          <label>Server URL</label>
           <div class="url-display">
             <code>{{ serverUrl }}</code>
-            <button class="btn btn-secondary" @click="generateQrCode">QRコード</button>
+            <button class="btn btn-secondary" @click="generateQrCode">QR Code</button>
           </div>
         </div>
 
         <div class="info-box">
-          <p>スマホのブラウザでこのURLにアクセスするか、QRコードをスキャンしてください。</p>
-          <p>※ 同じWi-Fiネットワークに接続している必要があります。</p>
+          <p>Access this URL from your smartphone browser or scan the QR code.</p>
+          <p>* Both devices must be on the same Wi-Fi network.</p>
         </div>
       </section>
 
@@ -316,18 +316,18 @@ onMounted(async () => {
       <section v-show="activeTab === 'buttons'" class="tab-content">
         <div class="form-row">
           <div class="form-group">
-            <label>グリッド列数</label>
+            <label>Grid Columns</label>
             <input type="number" v-model.number="config.grid.columns" min="1" max="12" />
           </div>
           <div class="form-group">
-            <label>グリッド行数</label>
+            <label>Grid Rows</label>
             <input type="number" v-model.number="config.grid.rows" min="1" max="6" />
           </div>
         </div>
 
-        <!-- グリッドプレビュー -->
+        <!-- Grid Preview -->
         <div class="grid-preview">
-          <h3>プレビュー（ドラッグで移動可能、ダブルクリックで編集）</h3>
+          <h3>Preview (drag to move, double-click to edit)</h3>
           <div
             class="preview-grid"
             :class="{ 'is-dragging': draggingButton }"
@@ -369,7 +369,7 @@ onMounted(async () => {
         </div>
 
         <div class="button-list">
-          <h3>登録ボタン</h3>
+          <h3>Registered Buttons</h3>
           <div
             v-for="button in config.buttons"
             :key="button.id"
@@ -383,13 +383,13 @@ onMounted(async () => {
               </span>
             </div>
             <div class="button-actions">
-              <button class="btn btn-small" @click="openButtonEditor(button)">編集</button>
-              <button class="btn btn-small btn-danger" @click="deleteButton(button.id)">削除</button>
+              <button class="btn btn-small" @click="openButtonEditor(button)">Edit</button>
+              <button class="btn btn-small btn-danger" @click="deleteButton(button.id)">Delete</button>
             </div>
           </div>
         </div>
 
-        <button class="btn btn-primary" @click="openButtonEditor()">+ ボタン追加</button>
+        <button class="btn btn-primary" @click="openButtonEditor()">+ Add Button</button>
       </section>
     </main>
 
@@ -409,65 +409,65 @@ onMounted(async () => {
     <footer class="footer">
       <span class="save-message" :class="{ visible: saveMessage }">{{ saveMessage }}</span>
       <button class="btn btn-primary" @click="saveConfig" :disabled="isSaving">
-        {{ isSaving ? '保存中...' : '設定を保存' }}
+        {{ isSaving ? 'Saving...' : 'Save Settings' }}
       </button>
     </footer>
 
-    <!-- QRコードモーダル -->
+    <!-- QR Code Modal -->
     <div v-if="showQrModal" class="modal" @click.self="showQrModal = false">
       <div class="modal-content">
-        <h2>QRコード</h2>
+        <h2>QR Code</h2>
         <img v-if="qrCode" :src="qrCode" alt="QR Code" class="qr-image" />
         <p class="qr-url">{{ serverUrl }}</p>
-        <button class="btn btn-secondary" @click="showQrModal = false">閉じる</button>
+        <button class="btn btn-secondary" @click="showQrModal = false">Close</button>
       </div>
     </div>
 
-    <!-- ボタン編集モーダル -->
+    <!-- Button Edit Modal -->
     <div v-if="showButtonModal && editingButton" class="modal" @click.self="showButtonModal = false">
       <div class="modal-content modal-large">
-        <h2>{{ editingButton.id.startsWith('btn_') ? 'ボタン追加' : 'ボタン編集' }}</h2>
+        <h2>{{ editingButton.id.startsWith('btn_') ? 'Add Button' : 'Edit Button' }}</h2>
 
         <div class="form-group">
-          <label>ラベル</label>
+          <label>Label</label>
           <input type="text" v-model="editingButton.label" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>X位置</label>
+            <label>X Position</label>
             <input type="number" v-model.number="editingButton.position.x" min="0" />
           </div>
           <div class="form-group">
-            <label>Y位置</label>
+            <label>Y Position</label>
             <input type="number" v-model.number="editingButton.position.y" min="0" />
           </div>
           <div class="form-group">
-            <label>幅</label>
+            <label>Width</label>
             <input type="number" v-model.number="editingButton.position.width" min="1" />
           </div>
           <div class="form-group">
-            <label>高さ</label>
+            <label>Height</label>
             <input type="number" v-model.number="editingButton.position.height" min="1" />
           </div>
         </div>
 
         <div class="form-group">
-          <label>色</label>
+          <label>Color</label>
           <input type="color" v-model="editingButton.color" />
         </div>
 
         <div class="form-group">
-          <label>アクションタイプ</label>
+          <label>Action Type</label>
           <select :value="editingButton.action.type" @change="changeActionType(($event.target as HTMLSelectElement).value as any)">
-            <option value="shortcut">ショートカットキー</option>
-            <option value="text_and_enter">テキスト入力 + Enter</option>
+            <option value="shortcut">Shortcut Key</option>
+            <option value="text_and_enter">Text Input + Enter</option>
           </select>
         </div>
 
-        <!-- ショートカット設定 -->
+        <!-- Shortcut Settings -->
         <div v-if="editingButton.action.type === 'shortcut'" class="form-group">
-          <label>キー設定</label>
+          <label>Keys</label>
           <div class="keys-list">
             <div
               v-for="(key, index) in editingKeys"
@@ -475,26 +475,26 @@ onMounted(async () => {
               class="key-item"
             >
               <select :value="key" @change="updateKey(index, ($event.target as HTMLSelectElement).value)">
-                <optgroup label="修飾キー">
+                <optgroup label="Modifiers">
                   <option v-for="k in modifierKeys" :key="k" :value="k">{{ k }}</option>
                 </optgroup>
-                <optgroup label="通常キー">
+                <optgroup label="Keys">
                   <option v-for="k in commonKeys" :key="k" :value="k">{{ k }}</option>
                 </optgroup>
               </select>
               <button class="btn btn-small btn-danger" @click="removeKey(index)">×</button>
             </div>
           </div>
-          <button class="btn btn-small" @click="addKey">+ キー追加</button>
+          <button class="btn btn-small" @click="addKey">+ Add Key</button>
         </div>
 
-        <!-- テキスト入力設定 -->
+        <!-- Text Input Settings -->
         <div v-else class="form-group">
-          <label>入力テキスト</label>
+          <label>Text to Input</label>
           <input type="text" v-model="editingText" />
         </div>
 
-        <!-- リピート設定 -->
+        <!-- Repeat Settings -->
         <div class="form-group">
           <label class="checkbox-label">
             <input
@@ -502,10 +502,10 @@ onMounted(async () => {
               :checked="editingButton.repeat?.enabled"
               @change="toggleRepeat(($event.target as HTMLInputElement).checked)"
             />
-            長押しでキーをリピート送信
+            Repeat on long press
           </label>
           <div v-if="editingButton.repeat?.enabled" class="repeat-settings">
-            <label>リピート間隔 (ミリ秒)</label>
+            <label>Repeat Interval (ms)</label>
             <input
               type="number"
               :value="editingButton.repeat?.interval_ms || 100"
@@ -517,8 +517,8 @@ onMounted(async () => {
         </div>
 
         <div class="modal-actions">
-          <button class="btn btn-secondary" @click="showButtonModal = false">キャンセル</button>
-          <button class="btn btn-primary" @click="saveButton">保存</button>
+          <button class="btn btn-secondary" @click="showButtonModal = false">Cancel</button>
+          <button class="btn btn-primary" @click="saveButton">Save</button>
         </div>
       </div>
     </div>
